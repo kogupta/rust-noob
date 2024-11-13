@@ -1,1 +1,4 @@
 /target
+/.idea/modules.xml
+/.idea/rust_scratch.iml
+/.idea/vcs.xml
