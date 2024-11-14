@@ -1,6 +1,7 @@
 
 mod rotate_sorted_array;
 mod valid_triangle_numbers;
+mod sling_windows;
 
 fn main() {
     println!("Hello, world!");
