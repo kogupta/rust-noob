@@ -1,6 +1,4 @@
 // https://leetcode.com/problems/fruit-into-baskets/
-
-
 fn total_fruit(fruits: Vec<i32>) -> i32 {
     use std::cmp::max;
     use std::collections::HashMap;
