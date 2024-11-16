@@ -87,6 +87,33 @@ fn character_replacement(s: String, k: i32) -> i32 {
     (s.len() - start) as i32
 }
 
+// https://leetcode.com/problems/max-consecutive-ones-iii/description/
+fn longest_ones(nums: Vec<i32>, k: i32) -> i32 {
+    use std::cmp::max;
+
+    let mut zeroes = 0;
+    let mut max_len = 0;
+    let mut start = 0;
+    for (end, one_or_zero) in nums.iter().enumerate() {
+        if *one_or_zero == 0 {
+            zeroes += 1;
+
+            // # of zeroes should be <= k
+            while zeroes > k {
+                let n = nums[start];
+                start += 1;
+                if n == 0 {
+                    zeroes -= 1;
+                }
+            }
+        }
+
+        max_len = max(max_len, end - start + 1);
+    }
+
+    max_len as i32
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -114,5 +141,17 @@ mod tests {
         assert_eq!(character_replacement(String::from("ABABBA"), 2), 5);
         assert_eq!(character_replacement(String::from("BBABCCDD"), 2), 5);
         assert_eq!(character_replacement(String::from("BCBABCCCCA"), 2), 6);
+    }
+
+    #[test]
+    fn test_longest_ones() {
+        assert_eq!(longest_ones(vec![1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2), 6);
+        assert_eq!(
+            longest_ones(
+                vec![0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1],
+                3,
+            ),
+            10
+        );
     }
 }
