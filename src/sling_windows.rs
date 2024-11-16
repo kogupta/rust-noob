@@ -1,4 +1,3 @@
-
 // https://leetcode.com/problems/fruit-into-baskets/
 fn total_fruit(fruits: Vec<i32>) -> i32 {
     use std::cmp::max;
@@ -41,7 +40,7 @@ fn max_score(card_points: Vec<i32>, k: i32) -> i32 {
     let mut curr_sum: i32 = card_points.iter().take(k as usize).sum();
 
     if card_points.len() == k as usize {
-        return curr_sum
+        return curr_sum;
     }
 
     let mut max_sum = curr_sum;
@@ -54,6 +53,38 @@ fn max_score(card_points: Vec<i32>, k: i32) -> i32 {
     }
 
     max_sum
+}
+
+// https://leetcode.com/problems/longest-repeating-character-replacement
+fn character_replacement(s: String, k: i32) -> i32 {
+    use std::cmp::max;
+
+    // sliding window
+    // window length - most frequent char in window -> # of replacements
+    // => invariant: window length - most frequent char in window <= k
+    // => update left pointer when invariant is false
+
+    let mut start: usize = 0;
+    let mut max_freq = 0;
+    let char_array = s.as_bytes();
+    let mut char_counts = [0; 26];
+
+    for (end, c) in char_array.iter().enumerate() {
+        let idx = (c - b'A') as usize;
+        char_counts[idx] += 1;
+
+        max_freq = max(max_freq, char_counts[idx]);
+
+        // invariant: window-length - most-freq-char-count <= k
+        // window length = idx - start + 1
+        while (end - start + 1) - max_freq > k as usize {
+            let char_index = (char_array[start] - b'A') as usize;
+            char_counts[char_index] -= 1;
+            start += 1;
+        }
+    }
+
+    (s.len() - start) as i32
 }
 
 #[cfg(test)]
@@ -73,5 +104,15 @@ mod tests {
         assert_eq!(max_score(vec![9, 7, 7, 9, 7, 7, 9], 7), 55);
         assert_eq!(max_score(vec![2, 11, 4, 5, 3, 9, 2], 3), 17);
         assert_eq!(max_score(vec![1, 79, 80, 1, 1, 1, 200, 1], 3), 202);
+    }
+
+    #[test]
+    fn test_char_replacement() {
+        assert_eq!(character_replacement(String::from("ABAB"), 2), 4);
+        assert_eq!(character_replacement(String::from("AABAC"), 2), 5);
+        assert_eq!(character_replacement(String::from("AABABBA"), 1), 4);
+        assert_eq!(character_replacement(String::from("ABABBA"), 2), 5);
+        assert_eq!(character_replacement(String::from("BBABCCDD"), 2), 5);
+        assert_eq!(character_replacement(String::from("BCBABCCCCA"), 2), 6);
     }
 }
