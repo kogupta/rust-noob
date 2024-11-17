@@ -1,3 +1,4 @@
+
 // https://leetcode.com/problems/fruit-into-baskets/
 fn total_fruit(fruits: Vec<i32>) -> i32 {
     use std::cmp::max;
@@ -114,6 +115,48 @@ fn longest_ones(nums: Vec<i32>, k: i32) -> i32 {
     max_len as i32
 }
 
+// https://leetcode.com/problems/maximum-sum-of-distinct-subarrays-with-length-k/
+fn maximum_subarray_sum(nums: Vec<i32>, k: i32) -> i64 {
+    use std::cmp::max;
+
+    let mut window_sum: i64 = 0;
+    let mut max_sum: i64 = 0;
+
+    let mut counts: Vec<i32> = {
+        let n = nums.iter().max().unwrap();
+        vec![0; (n + 1) as usize]
+    };
+
+    let mut start = 0;
+    for (end, n) in nums.iter().enumerate() {
+        counts[*n as usize] += 1;
+        window_sum += *n as i64;
+
+        if counts[*n as usize] == 1 {
+            // not yet seen in window
+
+            let window_length = end - start + 1;
+            if window_length == k as usize {
+                max_sum = max(window_sum, max_sum);
+                let left = nums[start];
+                counts[left as usize] -= 1;
+                window_sum -= left as i64;
+                start += 1;
+            }
+        } else {
+            // duplicate
+            while counts[*n as usize] > 1 {
+                let left = nums[start];
+                counts[left as usize] -= 1;
+                window_sum -= left as i64;
+                start += 1;
+            }
+        }
+    }
+
+    max_sum
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -153,5 +196,13 @@ mod tests {
             ),
             10
         );
+    }
+
+    #[test]
+    fn test_subarray_sum() {
+        assert_eq!(maximum_subarray_sum(vec![1, 5, 4, 2, 9, 9, 9], 3), 15);
+        assert_eq!(maximum_subarray_sum(vec![9, 9, 9], 3), 0);
+        assert_eq!(maximum_subarray_sum(vec![9, 18, 10, 13, 17, 9, 19, 2, 1, 18], 5), 68);
+        assert_eq!(maximum_subarray_sum(vec![9, 9, 9, 1, 2, 3], 3), 12);
     }
 }
