@@ -6,6 +6,7 @@ fn insert(intervals: Vec<Vec<i32>>, mut new_interval: Vec<i32>) -> Vec<Vec<i32>>
     let mut result: Vec<Vec<i32>> = Vec::new();
 
     let mut index = 0;
+    // let mut new_interval = new_interval;
 
     // less than pivot
     while index < intervals.len() && intervals[index][1] < new_interval[0] {
@@ -24,7 +25,7 @@ fn insert(intervals: Vec<Vec<i32>>, mut new_interval: Vec<i32>) -> Vec<Vec<i32>>
         index += 1;
     }
 
-    result.push(new_interval.clone());
+    result.push(new_interval);
 
     // items > merged-entity
     while index < intervals.len() {
