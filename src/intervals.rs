@@ -44,15 +44,14 @@ fn merge(mut intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
     let mut result: Vec<Vec<i32>> = Vec::new();
     result.push(intervals[0].clone());
 
-    for i in 1..intervals.len() {
+    for curr in intervals[1..].iter() {
         let last = result.last_mut().unwrap();
-        let curr = intervals[i].clone();
         // last: | ..... |
         // curr:     | ... |
         if curr[0] <= last[1] {
             last[1] = max(curr[1], last[1]);
         } else {
-            result.push(curr);
+            result.push(curr.clone());
         }
     }
 
