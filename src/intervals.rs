@@ -36,6 +36,29 @@ fn insert(intervals: Vec<Vec<i32>>, mut new_interval: Vec<i32>) -> Vec<Vec<i32>>
     result
 }
 
+fn merge(mut intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+    use std::cmp::max;
+
+    intervals.sort_unstable_by_key(|x| x[0]);
+
+    let mut result: Vec<Vec<i32>> = Vec::new();
+    result.push(intervals[0].clone());
+
+    for i in 1..intervals.len() {
+        let last = result.last_mut().unwrap();
+        let curr = intervals[i].clone();
+        // last: | ..... |
+        // curr:     | ... |
+        if curr[0] <= last[1] {
+            last[1] = max(curr[1], last[1]);
+        } else {
+            result.push(curr);
+        }
+    }
+
+    result
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -67,5 +90,12 @@ mod tests {
         // assert_eq!(
         //     insert(vec![], vec![5, 7]),
         //     vec![[5, 7]]);
+    }
+
+    #[test]
+    fn test_interval_merge() {
+        assert_eq!(merge(vec![vec![1, 3], vec![2, 6], vec![8, 10], vec![15, 18]]),
+                   vec![[1, 6], [8, 10], [15, 18]]);
+        assert_eq!(merge(vec![vec![1, 4], vec![4, 5]]), vec![[1, 5]]);
     }
 }
