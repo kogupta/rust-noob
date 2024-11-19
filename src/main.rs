@@ -3,6 +3,7 @@ mod rotate_sorted_array;
 mod valid_triangle_numbers;
 mod sling_windows;
 mod intervals;
+mod stacks;
 
 fn main() {
     println!("Hello, world!");
