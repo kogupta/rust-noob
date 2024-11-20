@@ -23,7 +23,7 @@ fn decode_string(s: String) -> String {
     // stack - [ -> capture context for expr evaluation
     //         ] -> eval expression, push expr back on stack/context
 
-    // these capture current context
+    // capture current context
     let mut k: usize = 0;
     let mut curr_string = String::new();
 
@@ -36,7 +36,6 @@ fn decode_string(s: String) -> String {
                 // capture context
                 numbers.push(k);
                 string_stack.push(curr_string.clone());
-                println!("[start] stacks: {:?}, {:?}", string_stack, numbers);
 
                 // reset context
                 curr_string = String::new();
@@ -46,7 +45,6 @@ fn decode_string(s: String) -> String {
                 // eval expression
                 // a2[c] -> a + 2 * c
                 // a -> prev from stack, c -> current
-                println!("[>eval] stacks: {:?}, {:?}", string_stack, numbers);
 
                 let n = numbers.pop().unwrap();
                 let prev: &mut String = &mut string_stack.pop().unwrap();
@@ -54,8 +52,6 @@ fn decode_string(s: String) -> String {
 
                 // update curr context
                 curr_string = prev.to_string();
-                println!("[<eval] stacks: {:?}, {:?}, {:?}",
-                         string_stack, numbers, curr_string);
             },
             '0'..='9' => k = k * 10 + (c as u8 - b'0') as usize,
             _ => curr_string.push(c),
@@ -65,9 +61,34 @@ fn decode_string(s: String) -> String {
     curr_string
 }
 
+fn longest_valid_parentheses(s: String) -> i32 {
+    use std::cmp::max;
+
+    let mut expr_start: Vec<i32> = Vec::new();
+    let mut len = 0;
+    expr_start.push(-1);
+
+    for (idx, c) in s.chars().enumerate() {
+        if c == '(' {
+            expr_start.push(idx as i32);
+        } else {
+            expr_start.pop();
+            if expr_start.is_empty() {
+                // no empty open parens - reset here
+                expr_start.push(idx as i32);
+            } else {
+                let last = expr_start[expr_start.len() - 1];
+                len = max(len, idx as i32 - last);
+            }
+        }
+    }
+
+    len
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::stacks::{decode_string, is_valid};
+    use crate::stacks::{decode_string, is_valid, longest_valid_parentheses};
 
     #[test]
     fn test_is_valid() {
@@ -89,5 +110,14 @@ mod tests {
         assert_eq!(decode_string("x2[ab]3[c]y".to_string()), "xababcccy");
         assert_eq!(decode_string("3[a2[c]]".to_string()), "accaccacc");
         assert_eq!(decode_string("x3[a2[c]]y".to_string()), "xaccaccaccy");
+    }
+
+    #[test]
+    fn test_longest_valid_parentheses() {
+        assert_eq!(longest_valid_parentheses("()(()".to_string()), 2);
+        assert_eq!(longest_valid_parentheses("())))".to_string()), 2);
+        assert_eq!(longest_valid_parentheses("(()".to_string()), 2);
+        assert_eq!(longest_valid_parentheses(")()())".to_string()), 4);
+        assert_eq!(longest_valid_parentheses(")()())((()()())".to_string()), 8);
     }
 }
