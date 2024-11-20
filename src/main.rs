@@ -77,6 +77,32 @@ pub fn three_sum(mut nums: Vec<i32>) -> Vec<Vec<i32>> {
     result.iter().map(|(a, b, c)| vec![*a, *b, *c]).collect()
 }
 
+// https://leetcode.com/problems/container-with-most-water/
+fn container_most_water(heights: Vec<i32>) -> i32 {
+    use std::cmp::{max, min};
+
+    let mut max_area = 0;
+    let mut left = 0;
+    let mut right = heights.len() - 1;
+
+    while left < right {
+        let height = min(heights[left], heights[right]);
+        let width = (right - left) as i32;
+
+        max_area = max(max_area, height * width);
+
+        // prune lower heights
+        while left < right && heights[left] <= height {
+            left += 1;
+        }
+        while left < right && heights[right] <= height {
+            right -= 1;
+        }
+    }
+
+    max_area
+}
+
 // https://leetcode.com/problems/unique-substrings-in-wraparound-string
 fn find_substring_in_wraparound_string(s: String) -> i32 {
     use std::cmp::max;
@@ -111,38 +137,12 @@ fn find_substring_in_wraparound_string(s: String) -> i32 {
 
 #[cfg(test)]
 mod tests {
-    use crate::find_substring_in_wraparound_string;
+    use crate::{container_most_water, find_substring_in_wraparound_string};
 
     #[test]
     fn test_container_most_water() {
         assert_eq!(container_most_water(vec![3, 4, 1, 2, 2, 4, 1, 3, 2]), 21);
         assert_eq!(container_most_water(vec![1, 8, 6, 2, 5, 4, 8, 3, 7]), 49);
-    }
-
-    // https://leetcode.com/problems/container-with-most-water/
-    fn container_most_water(heights: Vec<i32>) -> i32 {
-        use std::cmp::{max, min};
-
-        let mut max_area = 0;
-        let mut left = 0;
-        let mut right = heights.len() - 1;
-
-        while left < right {
-            let height = min(heights[left], heights[right]);
-            let width = (right - left) as i32;
-
-            max_area = max(max_area, height * width);
-
-            // prune lower heights
-            while left < right && heights[left] <= height {
-                left += 1;
-            }
-            while left < right && heights[right] <= height {
-                right -= 1;
-            }
-        }
-
-        max_area
     }
 
     #[test]
