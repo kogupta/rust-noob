@@ -1,4 +1,3 @@
-
 // https://leetcode.com/problems/valid-parentheses/
 fn is_valid(s: String) -> bool {
     let mut stack: Vec<char> = Vec::new();
@@ -40,7 +39,7 @@ fn decode_string(s: String) -> String {
                 // reset context
                 curr_string = String::new();
                 k = 0;
-            },
+            }
             ']' => {
                 // eval expression
                 // a2[c] -> a + 2 * c
@@ -52,7 +51,7 @@ fn decode_string(s: String) -> String {
 
                 // update curr context
                 curr_string = prev.to_string();
-            },
+            }
             '0'..='9' => k = k * 10 + (c as u8 - b'0') as usize,
             _ => curr_string.push(c),
         }
@@ -61,6 +60,7 @@ fn decode_string(s: String) -> String {
     curr_string
 }
 
+// https://leetcode.com/problems/longest-valid-parentheses
 fn longest_valid_parentheses(s: String) -> i32 {
     use std::cmp::max;
 
