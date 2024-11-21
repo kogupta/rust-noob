@@ -125,6 +125,23 @@ fn next_smaller_element(items: Vec<i32>) -> Vec<i32> {
     result
 }
 
+// https://leetcode.com/problems/daily-temperatures
+fn daily_temperatures(temperatures: Vec<i32>) -> Vec<i32> {
+    let mut result: Vec<i32> = vec![0; temperatures.len()];
+    let mut indices: Vec<usize> = vec![];
+
+    for (idx, temp) in temperatures.iter().enumerate() {
+        while !indices.is_empty() && *temp > temperatures[*indices.last().unwrap()] {
+            let last_idx = indices.pop().unwrap();
+            result[last_idx] = (idx - last_idx) as i32;
+        }
+
+        indices.push(idx);
+    }
+
+    result
+}
+
 #[cfg(test)]
 mod tests {
     use crate::stacks::*;
@@ -176,5 +193,15 @@ mod tests {
             next_smaller_element(vec![2, 1, 3, 2, 4, 3]),
             vec![1, -1, 2, -1, 3, -1]
         );
+    }
+
+    #[test]
+    fn test_daily_temperatures() {
+        assert_eq!(
+            daily_temperatures(vec![73, 74, 75, 71, 69, 72, 76, 73]),
+            vec![1, 1, 4, 2, 1, 1, 0, 0]
+        );
+        assert_eq!(daily_temperatures(vec![30, 40, 50, 60]), vec![1, 1, 1, 0]);
+        assert_eq!(daily_temperatures(vec![30, 60, 90]), vec![1, 1, 0]);
     }
 }
