@@ -86,9 +86,51 @@ fn longest_valid_parentheses(s: String) -> i32 {
     len
 }
 
+fn next_greater_element(items: Vec<i32>) -> Vec<i32> {
+    // find next greater element
+    // 2, 1, 3, 2, 4, 3
+    // 3, 3, 4, 4, -1, -1  -> -1 is default for no greater number exists to the right
+
+    // use a stack to track indices of input elements
+    // while iterating input -
+    //      if current number > stack[top] => current number > some previous number
+
+    let mut result: Vec<i32> = vec![-1; items.len()];
+
+    let mut indices: Vec<usize> = vec![];
+
+    for (idx, n) in items.iter().enumerate() {
+        while !indices.is_empty() && *n > items[*indices.last().unwrap()] {
+            let last: usize = indices.pop().unwrap();
+            result[last] = *n;
+        }
+
+        indices.push(idx);
+    }
+
+    result
+}
+
+fn next_smaller_element(items: Vec<i32>) -> Vec<i32> {
+    let mut result = vec![-1; items.len()];
+    let mut indices: Vec<usize> = vec![];
+    for (idx, curr) in items.iter().enumerate() {
+        while !indices.is_empty() && *curr < items[*indices.last().unwrap()] {
+            let last: usize = indices.pop().unwrap();
+            result[last] = *curr;
+        }
+        indices.push(idx);
+    }
+
+    result
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::stacks::{decode_string, is_valid, longest_valid_parentheses};
+    use crate::stacks::{
+        decode_string, is_valid, longest_valid_parentheses, next_greater_element,
+        next_smaller_element,
+    };
 
     #[test]
     fn test_is_valid() {
@@ -119,5 +161,23 @@ mod tests {
         assert_eq!(longest_valid_parentheses("(()".to_string()), 2);
         assert_eq!(longest_valid_parentheses(")()())".to_string()), 4);
         assert_eq!(longest_valid_parentheses(")()())((()()())".to_string()), 8);
+    }
+
+    #[test]
+    fn test_next_greater_element() {
+        assert_eq!(next_greater_element(vec![1, 2, 3]), vec![2, 3, -1]);
+        assert_eq!(
+            next_greater_element(vec![2, 1, 3, 2, 4, 3]),
+            vec![3, 3, 4, 4, -1, -1]
+        );
+    }
+
+    #[test]
+    fn test_next_smaller_element() {
+        assert_eq!(next_smaller_element(vec![1, 2, 3]), vec![-1, -1, -1]);
+        assert_eq!(
+            next_smaller_element(vec![2, 1, 3, 2, 4, 3]),
+            vec![1, -1, 2, -1, 3, -1]
+        );
     }
 }
