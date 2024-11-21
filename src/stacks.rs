@@ -127,10 +127,7 @@ fn next_smaller_element(items: Vec<i32>) -> Vec<i32> {
 
 #[cfg(test)]
 mod tests {
-    use crate::stacks::{
-        decode_string, is_valid, longest_valid_parentheses, next_greater_element,
-        next_smaller_element,
-    };
+    use crate::stacks::*;
 
     #[test]
     fn test_is_valid() {
