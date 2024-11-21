@@ -131,10 +131,26 @@ fn daily_temperatures(temperatures: Vec<i32>) -> Vec<i32> {
     let mut indices: Vec<usize> = vec![];
 
     for (idx, temp) in temperatures.iter().enumerate() {
-        while !indices.is_empty() && *temp > temperatures[*indices.last().unwrap()] {
-            let last_idx = indices.pop().unwrap();
-            result[last_idx] = (idx - last_idx) as i32;
+        loop {
+            if indices.is_empty() {
+                break;
+            }
+
+            if let Some(last) = indices.last() {
+                if *temp <= temperatures[*last] {
+                    // day is not hotter, skip
+                    break;
+                } else {
+                    let last = indices.pop().unwrap();
+                    result[last] = (idx - last) as i32;
+                }
+            }
         }
+
+        // while !indices.is_empty() && *temp > temperatures[*indices.last().unwrap()] {
+        //     let last_idx = indices.pop().unwrap();
+        //     result[last_idx] = (idx - last_idx) as i32;
+        // }
 
         indices.push(idx);
     }
