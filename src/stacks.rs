@@ -142,6 +142,54 @@ fn daily_temperatures(temperatures: Vec<i32>) -> Vec<i32> {
     result
 }
 
+// https://leetcode.com/problems/largest-rectangle-in-histogram/
+fn largest_rectangle_area(heights: Vec<i32>) -> i32 {
+    use std::cmp::max;
+
+    // track (startIndex, value) in stack
+    // stack has heights in increasing order
+    // pop from stack when head >= curr item
+    // say, stack has 2, 8 - now current height is 5
+    //   => 2 will have width 3
+    //   => 8 will have width 1
+    //   => 5 will have width 2 - although starts at i, its starting index is mapped to that of 8
+
+    let mut stack: Vec<(i32, i32)> = vec![];
+    let mut max_area = 0;
+
+    for (idx, height) in heights.iter().enumerate() {
+        let idx = idx as i32;
+        let mut pair = (idx, *height);
+
+        loop {
+            if stack.is_empty() {
+                break;
+            }
+
+            if let Some((_, prev_height)) = stack.last() {
+                if *height > *prev_height {
+                    break;
+                } else {
+                    let (start_index, prev_height) = stack.pop().unwrap();
+                    pair.0 = start_index;
+
+                    max_area = max(max_area, prev_height * (idx - start_index));
+                }
+            }
+        }
+
+        stack.push(pair);
+    }
+
+    // check if any existing items have greater area
+    let len = heights.len() as i32;
+    for (start_index, height) in stack {
+        max_area = max(max_area, height * (len - start_index));
+    }
+
+    max_area
+}
+
 #[cfg(test)]
 mod tests {
     use crate::stacks::*;
@@ -203,5 +251,13 @@ mod tests {
         );
         assert_eq!(daily_temperatures(vec![30, 40, 50, 60]), vec![1, 1, 1, 0]);
         assert_eq!(daily_temperatures(vec![30, 60, 90]), vec![1, 1, 0]);
+    }
+
+    #[test]
+    fn test_largest_rectangle_area() {
+        assert_eq!(largest_rectangle_area(vec![2, 8, 5, 6, 3]), 15);
+        assert_eq!(largest_rectangle_area(vec![2, 8, 5, 6, 2, 3]), 15);
+        assert_eq!(largest_rectangle_area(vec![2, 1, 5, 6, 2, 3]), 10);
+        assert_eq!(largest_rectangle_area(vec![2, 4]), 4);
     }
 }
