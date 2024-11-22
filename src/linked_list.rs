@@ -4,15 +4,11 @@ fn find_duplicate(nums: Vec<i32>) -> i32 {
     // each items in array is pointing to next node index
     // find cycle - then find cycle/loop start index/value
 
-    let mut slow = 0;
-    let mut fast = 0;
-    loop {
+    let mut slow = nums[0] as usize;
+    let mut fast = nums[nums[0] as usize] as usize;
+    while slow != fast {
         slow = nums[slow] as usize;
         fast = nums[nums[fast] as usize] as usize;
-
-        if slow == fast {
-            break;
-        }
     }
 
     // loop found - pointers on intersection point
