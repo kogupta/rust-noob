@@ -1,4 +1,5 @@
 mod intervals;
+mod linked_list;
 mod rotate_sorted_array;
 mod sling_windows;
 mod stacks;
