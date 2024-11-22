@@ -136,9 +136,24 @@ fn find_substring_in_wraparound_string(s: String) -> i32 {
     substring_lengths.iter().sum::<usize>() as i32
 }
 
+// https://leetcode.com/problems/find-unique-binary-string/
+fn find_different_binary_string(nums: Vec<String>) -> String {
+    let mut res = String::with_capacity(nums.len());
+    for (idx, s) in nums.iter().enumerate() {
+        let c = s.as_bytes()[idx] as char;
+        let append = match c {
+            '0' => '1',
+            _ => '0',
+        };
+        res.push(append);
+    }
+
+    res
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{container_most_water, find_substring_in_wraparound_string};
+    use crate::*;
 
     #[test]
     fn test_container_most_water() {
@@ -159,6 +174,14 @@ mod tests {
         assert_eq!(
             find_substring_in_wraparound_string(String::from("xyzab")),
             15
+        );
+    }
+
+    #[test]
+    fn test_diff_binary_string() {
+        assert_eq!(
+            find_different_binary_string(vec!["01".to_string(), "10".to_string()]),
+            "11"
         );
     }
 }
