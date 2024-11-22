@@ -32,4 +32,13 @@ mod tests {
         assert_eq!(find_duplicate(vec![3, 1, 3, 4, 2]), 3);
         assert_eq!(find_duplicate(vec![3, 3, 3, 3]), 3);
     }
+
+    #[test]
+    fn test_xor() {
+        fn single_number(nums: Vec<i32>) -> i32 {
+            nums.iter().fold(0, |acc, x| acc ^ x)
+        }
+
+        assert_eq!(single_number(vec![4, 1, 2, 1, 2]), 4);
+    }
 }
