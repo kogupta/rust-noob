@@ -1,4 +1,5 @@
 mod bin_search;
+mod heaps;
 mod intervals;
 mod linked_list;
 mod rotate_sorted_array;
