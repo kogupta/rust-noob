@@ -66,6 +66,28 @@ fn top_k_frequent(nums: Vec<i32>, k: i32) -> Vec<i32> {
     res
 }
 
+// previous problem - with sort - kinda cheating
+fn top_k_frequent2(nums: Vec<i32>, k: i32) -> Vec<i32> {
+    use std::collections::HashMap;
+
+    let k = k as usize;
+
+    let mut counts: HashMap<i32, i32> = HashMap::new();
+
+    for n in nums {
+        counts.entry(n).and_modify(|c| *c += 1).or_insert(1);
+    }
+
+    // reverse map of count -> item
+    let mut x: Vec<(i32, i32)> = counts
+        .iter()
+        .map(|(item, count)| (-count, *item))
+        .collect::<Vec<_>>();
+    x.sort_unstable_by_key(|(count, _)| *count);
+
+    x.iter().take(k).map(|(_, item)| *item).collect::<Vec<_>>()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -80,5 +102,8 @@ mod tests {
     fn test_k_most_frequent() {
         assert_eq!(top_k_frequent(vec![1, 1, 1, 2, 2, 3], 2), vec![1, 2]);
         assert_eq!(top_k_frequent(vec![1], 1), vec![1]);
+
+        assert_eq!(top_k_frequent2(vec![1, 1, 1, 2, 2, 3], 2), vec![1, 2]);
+        assert_eq!(top_k_frequent2(vec![1], 1), vec![1]);
     }
 }
