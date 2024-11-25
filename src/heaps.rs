@@ -88,6 +88,39 @@ fn top_k_frequent2(nums: Vec<i32>, k: i32) -> Vec<i32> {
     x.iter().take(k).map(|(_, item)| *item).collect::<Vec<_>>()
 }
 
+// https://leetcode.com/problems/find-k-closest-elements/
+fn find_closest_elements(arr: Vec<i32>, k: i32, target: i32) -> Vec<i32> {
+    // array is sorted - binary search time
+    // solution: has to be a contiguous window of length k
+    // key idea: reduce search space from right by k items (width of solution window)
+
+    let k = k as usize;
+
+    let mut lo = 0;
+    let mut hi = arr.len() - k;
+
+    while lo < hi {
+        let mid = lo + (hi - lo) / 2;
+
+        // both arr[mid] and arr[mid + k] CANNOT be in solution
+        //      -> window length > k
+        // so search between this window
+        // target > (arr[mid] + arr[mid + k])/2  -> loss of precision due to integer math
+        // or, 2*target > arr[mid] + arr[mid + k]
+        // or, target - arr[mid] > arr[mid + k] - target
+
+        if target - arr[mid] > arr[mid + k] - target {
+            // search right
+            lo = mid + 1;
+        } else {
+            hi = mid;
+        }
+    }
+
+    // window found - take next k elements
+    arr[lo..lo + k].to_vec()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -105,5 +138,25 @@ mod tests {
 
         assert_eq!(top_k_frequent2(vec![1, 1, 1, 2, 2, 3], 2), vec![1, 2]);
         assert_eq!(top_k_frequent2(vec![1], 1), vec![1]);
+    }
+
+    #[test]
+    fn test_k_closest() {
+        assert_eq!(
+            find_closest_elements(vec![1, 2, 3, 4, 5], 4, 3),
+            vec![1, 2, 3, 4]
+        );
+        assert_eq!(
+            find_closest_elements(vec![1, 1, 2, 3, 4, 5], 4, 1),
+            vec![1, 1, 2, 3]
+        );
+        assert_eq!(
+            find_closest_elements(vec![-1, 1, 1, 4, 6, 8, 10], 3, 11),
+            vec![6, 8, 10]
+        );
+        assert_eq!(
+            find_closest_elements(vec![-1, 1, 1, 4, 6, 8, 10], 3, 5),
+            vec![4, 6, 8]
+        );
     }
 }
