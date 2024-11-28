@@ -41,27 +41,23 @@ fn flood_fill(image: Vec<Vec<i32>>, sr: i32, sc: i32, color: i32) -> Vec<Vec<i32
 }
 
 fn num_islands(grid: Vec<Vec<char>>) -> i32 {
-    fn dfs(grid: &Vec<Vec<char>>, row: i32, col: i32, visited: &mut [Vec<bool>]) {
-        let m = grid.len() as i32;
-        let n = grid[0].len() as i32;
-        if row < 0 || row >= m || col < 0 || col >= n {
-            return;
+    fn dfs(grid: &Vec<Vec<char>>, row: usize, col: usize, visited: &mut [Vec<bool>]) {
+        if !visited[row][col] && grid[row][col] == '1' {
+            visited[row][col] = true;
+
+            if row > 0 {
+                dfs(grid, row - 1, col, visited);
+            }
+            if row < grid.len() - 1 {
+                dfs(grid, row + 1, col, visited);
+            }
+            if col > 0 {
+                dfs(grid, row, col - 1, visited);
+            }
+            if col < grid[0].len() - 1 {
+                dfs(grid, row, col + 1, visited);
+            }
         }
-
-        let row = row as usize;
-        let col = col as usize;
-        if visited[row][col] || grid[row][col] == '0' {
-            return;
-        }
-
-        visited[row][col] = true;
-
-        let row = row as i32;
-        let col = col as i32;
-        dfs(grid, row - 1, col, visited);
-        dfs(grid, row + 1, col, visited);
-        dfs(grid, row, col - 1, visited);
-        dfs(grid, row, col + 1, visited);
     }
 
     let mut id: i32 = 0;
@@ -70,7 +66,42 @@ fn num_islands(grid: Vec<Vec<char>>) -> i32 {
         for (j, c) in chars.iter().enumerate() {
             if *c == '1' && !visited[i][j] {
                 id += 1;
-                dfs(&grid, i as i32, j as i32, &mut visited);
+                dfs(&grid, i, j, &mut visited);
+            }
+        }
+    }
+
+    id
+}
+
+fn num_islands2(mut grid: Vec<Vec<char>>) -> i32 {
+    fn dfs(grid: &mut Vec<Vec<char>>, row: usize, col: usize) {
+        if grid[row][col] == '1' {
+            grid[row][col] = '0';
+
+            if row > 0 {
+                dfs(grid, row - 1, col);
+            }
+            if row < grid.len() - 1 {
+                dfs(grid, row + 1, col);
+            }
+            if col > 0 {
+                dfs(grid, row, col - 1);
+            }
+            if col < grid[0].len() - 1 {
+                dfs(grid, row, col + 1);
+            }
+        }
+    }
+
+    let mut id: i32 = 0;
+
+    // use in place mutation to track whether node is visited
+    for i in 0..grid.len() {
+        for j in 0..grid[0].len() {
+            if grid[i][j] == '1' {
+                id += 1;
+                dfs(&mut grid, i, j);
             }
         }
     }
@@ -87,6 +118,28 @@ mod tests {
         assert_eq!(
             flood_fill(vec![vec![1, 1, 1], vec![1, 1, 0], vec![1, 0, 1]], 1, 1, 2),
             vec![vec![2, 2, 2], vec![2, 2, 0], vec![2, 0, 1]]
+        );
+    }
+
+    #[test]
+    fn test_island_count() {
+        assert_eq!(
+            num_islands2(vec![
+                vec!['1', '1', '0', '0', '0'],
+                vec!['1', '1', '0', '0', '0'],
+                vec!['0', '0', '1', '0', '0'],
+                vec!['0', '0', '0', '1', '1']
+            ]),
+            3
+        );
+        assert_eq!(
+            num_islands2(vec![
+                vec!['1', '1', '1', '1', '0'],
+                vec!['1', '1', '0', '1', '0'],
+                vec!['1', '1', '0', '0', '0'],
+                vec!['0', '0', '0', '0', '0']
+            ]),
+            1
         );
     }
 }
