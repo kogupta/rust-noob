@@ -109,6 +109,58 @@ fn num_islands2(mut grid: Vec<Vec<char>>) -> i32 {
     id
 }
 
+// https://leetcode.com/problems/surrounded-regions/
+fn solve(board: &mut Vec<Vec<char>>) {
+    fn dfs(board: &mut Vec<Vec<char>>, r: usize, c: usize) {
+        if board[r][c] == 'O' {
+            board[r][c] = 'S';
+
+            if r > 0 {
+                dfs(board, r - 1, c);
+            }
+            if r < board.len() - 1 {
+                dfs(board, r + 1, c);
+            }
+            if c > 0 {
+                dfs(board, r, c - 1);
+            }
+            if c < board[0].len() - 1 {
+                dfs(board, r, c + 1);
+            }
+        }
+    }
+
+    let m = board.len();
+    let n = board[0].len();
+
+    // search for O in boundary - mark them as S
+    for r in 0..m {
+        for c in [0, n - 1] {
+            if board[r][c] == 'O' {
+                dfs(board, r, c);
+            }
+        }
+    }
+
+    for r in [0, m - 1] {
+        for c in 0..n {
+            if board[r][c] == 'O' {
+                dfs(board, r, c);
+            }
+        }
+    }
+
+    // re-mark S as O, other O as X
+    for chars in board {
+        for c in 0..n {
+            match chars[c] {
+                'S' => chars[c] = 'O',
+                _ => chars[c] = 'X',
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -141,5 +193,24 @@ mod tests {
             ]),
             1
         );
+    }
+
+    #[test]
+    fn test_surrounded_regions() {
+        let mut board = vec![
+            vec!['X', 'X', 'X', 'X'],
+            vec!['X', 'O', 'O', 'X'],
+            vec!['X', 'X', 'O', 'X'],
+            vec!['X', 'O', 'X', 'X'],
+        ];
+        let expected = vec![
+            vec!['X', 'X', 'X', 'X'],
+            vec!['X', 'X', 'X', 'X'],
+            vec!['X', 'X', 'X', 'X'],
+            vec!['X', 'O', 'X', 'X'],
+        ];
+        solve(&mut board);
+
+        assert_eq!(board, expected);
     }
 }
