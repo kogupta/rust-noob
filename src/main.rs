@@ -5,7 +5,7 @@ mod heaps;
 mod intervals;
 mod linked_list;
 mod rotate_sorted_array;
-mod sling_windows;
+mod sliding_windows;
 mod stacks;
 mod valid_triangle_numbers;
 

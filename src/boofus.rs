@@ -1,7 +1,6 @@
-use std::collections::{HashSet, VecDeque};
-
 // https://leetcode.com/problems/minimum-knight-moves/
 fn knight_min_moves(x: i32, y: i32) -> i32 {
+    use std::collections::{HashSet, VecDeque};
     // starting from origin, min steps to reach (x, y)
     // x and y in range: [-200, 200]
 
@@ -87,6 +86,74 @@ fn knight_min_moves(x: i32, y: i32) -> i32 {
     panic!("Expected solution before!")
 }
 
+// https://leetcode.com/problems/bus-routes/
+fn num_buses_to_destination(routes: Vec<Vec<i32>>, source: i32, target: i32) -> i32 {
+    use std::collections::{HashMap, VecDeque};
+
+    if source == target {
+        return 0;
+    }
+
+    // `routes` are "components"
+    // consider it Map[RouteId, [BusRoute]]
+    // build a reverse map: Map[BusRoute, [RouteId]]
+    // lookup using these 2 maps
+
+    type Route = usize;
+    type BusStop = i32;
+
+    fn build_reverse_map(routes: &[Vec<i32>]) -> HashMap<BusStop, Vec<Route>> {
+        let mut bus_stops: HashMap<BusStop, Vec<Route>> = HashMap::new();
+        for (id, stops) in routes.iter().enumerate() {
+            for stop in stops {
+                bus_stops.entry(*stop).or_default().push(id);
+            }
+        }
+
+        bus_stops
+    }
+
+    let bus_stops = build_reverse_map(&routes);
+
+    if !bus_stops.contains_key(&source) || !bus_stops.contains_key(&target) {
+        return -1;
+    }
+
+    // start searching via routes
+    // source -> one or more routes
+    let mut visited = vec![false; routes.len()];
+    let mut q: VecDeque<Route> = VecDeque::new();
+
+    for route in bus_stops.get(&source).unwrap() {
+        q.push_back(*route);
+        visited[*route] = true;
+    }
+
+    let mut stops = 0;
+
+    while !q.is_empty() {
+        let n = q.len();
+        for _ in 0..n {
+            let route = q.pop_front().unwrap();
+            for bus_stop in &routes[route] {
+                if target == *bus_stop {
+                    return stops + 1;
+                }
+                for route in bus_stops.get(bus_stop).unwrap() {
+                    if !visited[*route] {
+                        visited[*route] = true;
+                        q.push_back(*route);
+                    }
+                }
+            }
+        }
+
+        stops += 1;
+    }
+
+    -1
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -96,5 +163,13 @@ mod tests {
         assert_eq!(knight_min_moves(1, 2), 1);
         assert_eq!(knight_min_moves(4, 4), 4);
         assert_eq!(knight_min_moves(5, 5), 4);
+    }
+
+    #[test]
+    fn test_bus_routes() {
+        assert_eq!(
+            num_buses_to_destination(vec![vec![1, 2, 7], vec![3, 6, 7]], 1, 6),
+            2
+        );
     }
 }
