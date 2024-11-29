@@ -1,4 +1,5 @@
 mod bin_search;
+mod boofus;
 mod doofus;
 mod heaps;
 mod intervals;
