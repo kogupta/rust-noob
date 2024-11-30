@@ -161,6 +161,38 @@ fn solve(board: &mut Vec<Vec<char>>) {
     }
 }
 
+// https://leetcode.com/problems/letter-combinations-of-a-phone-number/
+fn letter_combinations(digits: String) -> Vec<String> {
+    let mut ans: Vec<String> = Vec::new();
+
+    if digits.is_empty() {
+        return ans;
+    }
+
+    ans.push("".to_string());
+
+    let table = [
+        "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz",
+    ];
+
+    for digit in digits.chars() {
+        let index = ((digit as u8) - b'0') as usize;
+        let letters = &table[index]; // abc def ...
+
+        let mut t: Vec<String> = Vec::new();
+
+        for a in &ans {
+            // iterate over abc def ...
+            for letter in letters.chars() {
+                t.push(format!("{}{}", a, letter));
+            }
+        }
+        ans = t;
+    }
+
+    ans
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

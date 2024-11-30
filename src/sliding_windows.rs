@@ -1,4 +1,3 @@
-
 // https://leetcode.com/problems/fruit-into-baskets/
 fn total_fruit(fruits: Vec<i32>) -> i32 {
     use std::cmp::max;
@@ -202,7 +201,10 @@ mod tests {
     fn test_subarray_sum() {
         assert_eq!(maximum_subarray_sum(vec![1, 5, 4, 2, 9, 9, 9], 3), 15);
         assert_eq!(maximum_subarray_sum(vec![9, 9, 9], 3), 0);
-        assert_eq!(maximum_subarray_sum(vec![9, 18, 10, 13, 17, 9, 19, 2, 1, 18], 5), 68);
+        assert_eq!(
+            maximum_subarray_sum(vec![9, 18, 10, 13, 17, 9, 19, 2, 1, 18], 5),
+            68
+        );
         assert_eq!(maximum_subarray_sum(vec![9, 9, 9, 1, 2, 3], 3), 12);
     }
 }
