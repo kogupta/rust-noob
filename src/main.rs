@@ -1,6 +1,7 @@
 mod bin_search;
 mod boofus;
 mod doofus;
+mod dp;
 mod heaps;
 mod intervals;
 mod linked_list;
