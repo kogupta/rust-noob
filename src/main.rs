@@ -156,6 +156,39 @@ fn find_different_binary_string(nums: Vec<String>) -> String {
     res
 }
 
+// https://leetcode.com/problems/subarray-sum-equals-k/
+fn subarray_sum(nums: Vec<i32>, k: i32) -> i32 {
+    use std::collections::HashMap;
+
+    // curr_sum(i) = sum till index i
+    // curr_sum(i) = prefix_sum(j) + k, where prefix_sum(j) is curr_sum(j), j < i
+    //  => prefix_sum = curr_sum(i) - k
+    //  => lookup if any prefix sum matches `curr_sum -k`
+
+    type PrefixSum = i32;
+    let mut prefix_sums: HashMap<PrefixSum, Vec<i32>> = HashMap::new();
+
+    prefix_sums.insert(0, vec![-1]);
+
+    let mut curr_sum: i32 = 0;
+    let mut res = 0;
+
+    for (idx, n) in nums.iter().enumerate() {
+        curr_sum += n;
+
+        let reqd_prefix_sum = curr_sum - k;
+        if let Some(indices) = prefix_sums.get(&reqd_prefix_sum) {
+            res += indices.len()
+        };
+        prefix_sums
+            .entry(curr_sum)
+            .and_modify(|indices| indices.push(idx as i32))
+            .or_insert(vec![idx as i32]);
+    }
+
+    res as i32
+}
+
 #[cfg(test)]
 mod tests {
     use crate::*;
@@ -188,5 +221,12 @@ mod tests {
             find_different_binary_string(vec!["01".to_string(), "10".to_string()]),
             "11"
         );
+    }
+
+    #[test]
+    fn test_subarray_sum_k() {
+        assert_eq!(subarray_sum(vec![3, 4, 7, 2, -3, 1, 4, 2], 7), 4);
+        assert_eq!(subarray_sum(vec![1, -1, 0], 0), 3);
+        assert_eq!(subarray_sum(vec![3, 2, 7, 2, -3, 1], 7), 2);
     }
 }
