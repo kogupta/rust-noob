@@ -1,3 +1,6 @@
+use rand::seq::IndexedRandom;
+use std::collections::HashMap;
+
 mod bin_search;
 mod boofus;
 mod doofus;
@@ -187,6 +190,49 @@ fn subarray_sum(nums: Vec<i32>, k: i32) -> i32 {
     }
 
     res as i32
+}
+
+struct RandomizedSet {
+    map: HashMap<i32, usize>,
+    arr: Vec<i32>,
+}
+impl RandomizedSet {
+    fn new() -> Self {
+        Self {
+            map: HashMap::new(),
+            arr: vec![],
+        }
+    }
+
+    fn insert(&mut self, val: i32) -> bool {
+        match self.map.get(&val) {
+            None => {
+                self.map.insert(val, self.arr.len());
+                self.arr.push(val);
+                true
+            }
+            Some(_) => false,
+        }
+    }
+
+    fn remove(&mut self, val: i32) -> bool {
+        match self.map.remove(&val) {
+            Some(index) => {
+                // remove from array
+                self.arr.swap_remove(index);
+                // update index in map IF item was NOT the last item in array
+                if index < self.arr.len() {
+                    self.map.insert(self.arr[index], index);
+                }
+                true
+            }
+            None => false,
+        }
+    }
+
+    fn get_random(&self) -> i32 {
+        *self.arr.choose(&mut rand::thread_rng()).unwrap()
+    }
 }
 
 #[cfg(test)]
