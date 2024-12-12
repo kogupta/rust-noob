@@ -5,6 +5,7 @@ mod bin_search;
 mod boofus;
 mod doofus;
 mod dp;
+mod epi_strings;
 mod heaps;
 mod intervals;
 mod linked_list;
