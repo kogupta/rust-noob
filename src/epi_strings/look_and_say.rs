@@ -1,7 +1,5 @@
 fn count_and_say(n: i32) -> String {
     fn next(input: &[usize], output: &mut Vec<usize>) {
-        println!("input: {:?}, buffer: {:?}", input, output);
-
         // NOTE: DO NOT use rusty for-loop
         // https://stackoverflow.com/a/70137058
         let mut idx = 0;
